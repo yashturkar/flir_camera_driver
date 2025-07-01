@@ -26,23 +26,25 @@ from launch_ros.substitutions import FindPackageShare
 example_parameters = {
     'blackfly_s': {
         'debug': False,
+        'pixel_format': 'BGR8', 
         'compute_brightness': False,
         'adjust_timestamp': True,
         'dump_node_map': False,
         # set parameters defined in blackfly_s.yaml
-        'gain_auto': 'Continuous',
+        'gain_auto': 'Continuous',  # 'Off', 'Continuous', 'Once'
+        #'gain':8,
         # 'pixel_format': 'BayerRG8',
-        'exposure_auto': 'Continuous',
+        'exposure_auto': 'Continuous',  # 'Off', 'Continuous', 'Once'
+        # 'target_grey_value_auto' : 'Continuous',
+        # 'target_grey_value': 50,
+        # 'target_grey_value_limit_upper': 99,
+        # 'target_grey_value_limit_lower': 0,
         # to use a user set, do this:
         # 'user_set_selector': 'UserSet0',
         # 'user_set_load': 'Yes',
         # These are useful for GigE cameras
         # 'device_link_throughput_limit': 380000000,
         # 'gev_scps_packet_size': 9000,
-        # PTP for GigE cameras
-        # 'gev_ieee_1588': True,
-        # 'gev_ieee_1588_mode': 'SlaveOnly', # 'SlaveOnly',  #'Auto',
-        # 'use_ieee_1588' : True,
         # ---- to reduce the sensor width and shift the crop
         # 'image_width': 1408,
         # 'image_height': 1080,
@@ -51,10 +53,8 @@ example_parameters = {
         # 'binning_x': 1,
         # 'binning_y': 1,
         # 'connect_while_subscribed': True,
-        # 'reverse_x': True,
-        # 'reverse_y': True,
         'frame_rate_auto': 'Off',
-        'frame_rate': 40.0,
+        'frame_rate': 10.0,
         'frame_rate_enable': True,
         'buffer_queue_size': 10,
         'trigger_mode': 'Off',
