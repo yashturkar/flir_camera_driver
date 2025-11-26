@@ -57,6 +57,13 @@ parameters:
   - name: gain
     type: float
     node: AnalogControl/Gain
+  - name: auto_gain_upper_limit
+    type: float
+    node: AnalogControl/AutoGainUpperLimit
+
+  - name: auto_gain_lower_limit
+    type: float
+    node: AnalogControl/AutoGainLowerLimit
   #
   # -------- device link throughput limiting
   #
@@ -148,6 +155,13 @@ parameters:
     type: enum
     # valid values: "LevelLow", "LevelHigh", "FallingEdge", "RisingEdge", "AnyEdge",
     node: AcquisitionControl/TriggerActivation
+  - name: acquisition_frame_rate_enable
+    node: AcquisitionControl/AcquisitionFrameRateEnable
+    type: bool
+
+  - name: acquisition_frame_rate
+    node: AcquisitionControl/AcquisitionFrameRate
+    type: float
   #
   # --------- chunk control
   #

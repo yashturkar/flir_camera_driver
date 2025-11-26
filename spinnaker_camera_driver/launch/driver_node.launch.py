@@ -33,6 +33,8 @@ example_parameters = {
         # set parameters defined in blackfly_s.yaml
         'gain_auto': 'Continuous',  # 'Off', 'Continuous', 'Once'
         #'gain':8,
+        # 'auto_gain_upper_limit': 24.0,
+        # 'auto_gain_lower_limit': 0.0,
         # 'pixel_format': 'BayerRG8',
         'exposure_auto': 'Continuous',  # 'Off', 'Continuous', 'Once'
         # 'target_grey_value_auto' : 'Continuous',
