@@ -45,8 +45,8 @@ shared_cam_parameters = {
     'quiet': False,
     'buffer_queue_size': 1,
     'compute_brightness': False,  # fixed exposure/gain, no controllers needed
-#    'pixel_format': 'BayerRG16',
-    'pixel_format': 'BGR8',
+   'pixel_format': 'BayerRG16',
+    # 'pixel_format': 'BGR8',
     'exposure_auto': 'Off',
     'exposure_time': 25000,  # fixed exposure in usec
     'gain_auto': 'Off',
