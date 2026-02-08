@@ -1,0 +1,49 @@
+# Camera configuration
+
+CAMERA_SERIAL: "25366346"
+AUTO_CAMERA_SERIAL: "25366344"
+
+EXPOSURE_TIME_US: 14000.0  # initial guess for linear scene
+GAIN_DB: 12.0               # default gain for linear camera
+NUM_DISCARD_FRAMES: 3
+AUTO_NUM_DISCARD_FRAMES: 3
+ENABLE_CHUNK: True
+AUTO_ENABLE_CHUNK: True
+CAMERA_VERBOSE: True
+AUTO_CAMERA_VERBOSE: True
+
+CENTER_EXPOSURE_US: 25000.0
+EXPOSURE_BRACKET_STEPS: 2
+
+
+# Slave camera configuration
+SLAVE_GAIN_DB: 12.0                    # default gain for slave camera
+SLAVE_EXPOSURE_US: 8000.0             # initial exposure for slave camera (used for initial setup, Stage 1 uses trigger width)
+AUTO_EXPOSURE_TIME_US: 30000.0        # fallback exposure time for slave camera
+SLAVE_PIXEL_FORMAT: "BGR8"           # pixel format for slave color camera
+
+# Synchronization configuration
+SYNC_NUM_DISCARD_FRAMES: 2            # number of frames to discard before capture
+SYNC_CAPTURE_TIMEOUT_MS: 2000        # timeout for synchronized capture (milliseconds)
+SYNC_TARGET_FPS: 5.0                 # target frame rate for master camera
+SYNC_MASTER_OUTPUT_LINE: "Line1"     # GPIO line for master camera trigger output
+SYNC_SLAVE_TRIGGER_LINE: "Line3"     # GPIO line for slave camera trigger input
+SYNC_MASTER_ENABLE_3V3: False        # enable 3.3V on master camera line
+SYNC_SLAVE_ENABLE_3V3: False         # enable 3.3V on slave camera line
+SYNC_SLAVE_TRIGGER_DELAY_US: 0.0     # trigger delay for slave camera (microseconds)
+
+# Light configuration
+
+LIGHT_SERIAL_PORT: "/dev/ttyACM0"
+LIGHT_BAUD_RATE: 115200
+LIGHT_VERBOSE: True
+LIGHT_SETTLE_TIME_SEC: 1.0
+
+# Data collection parameters
+
+DATASET_LOCATION: "bracket_test"
+LIGHT_INTENSITY_INCR: 25          # percent
+IDLE_TIME_BETWEEN_CAPTURES_SEC: 1000  # milliseconds
+NUM_CAPTURES: 1                   # per setting
+SEQUENCE_NAME_PREFIX: "bracket_test_"
+SCENE_SUFFIX: "_step"

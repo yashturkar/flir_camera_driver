@@ -22,8 +22,6 @@
 # parameters are determined by the master. This is a useful setup for e.g. a
 # synchronized stereo camera.
 #
-import os
-
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument as LaunchArg
 from launch.actions import OpaqueFunction
@@ -39,19 +37,27 @@ camera_list = {
     'cam1': '25366344', # secondary camera ??
 }
 
+# Exposure controller parameters
+exposure_controller_parameters = {
+    'brightness_target': 128,  # from 0..255
+    'brightness_tolerance': 20,  # when to update exposure/gain
+    'max_exposure_time': 15000,  # usec
+    'min_exposure_time': 5000,  # usec
+    'max_gain': 29.9,
+    'gain_priority': False,
+}
+
 # Parameters shared by all cameras
 shared_cam_parameters = {
     'debug': False,
-    'quiet': False,
+    'quiet': True,
     'buffer_queue_size': 1,
-    'compute_brightness': False,  # fixed exposure/gain, no controllers needed
-#    'pixel_format': 'BayerRG16',
+    'compute_brightness': True,
     'pixel_format': 'BGR8',
-    'exposure_auto': 'Off',
-    'exposure_time': 25000,  # fixed exposure in usec
-    'gain_auto': 'Off',
-    'gain': 12.0,
-    'balance_white_auto': 'Off',
+    'exposure_auto': 'Continuous',
+    'exposure_time': 10000,  # not used under auto exposure
+    'gain_auto': 'Continuous',
+    'balance_white_auto': 'Continuous',
     'chunk_mode_active': True,
     'chunk_selector_frame_id': 'FrameID',
     'chunk_enable_frame_id': True,
@@ -69,9 +75,8 @@ primary_cam_parameters = {
     'trigger_mode': 'Off',
     'line1_selector': 'Line1',
     'line1_linemode': 'Output',
-    'line2_v33enable': False,
-    'frame_rate': 10.0,
-    'frame_rate_enable': True,
+    'line2_selector': 'Line2',
+    'line2_v33enable': True,
 }
 
 # Parameters for the secondary camera
@@ -80,28 +85,34 @@ secondary_cam_parameters = {
     'trigger_mode': 'On',
     'trigger_source': 'Line3',
     'trigger_selector': 'FrameStart',
-    'trigger_activation': 'RisingEdge',
-    'trigger_overlap': 'Off',
-    'trigger_delay': 0.0,
-    'frame_rate_enable': False,
+    'trigger_overlap': 'ReadOut',
 }
 
 
 def make_parameters(context):
     """Generate camera parameters for the driver node."""
-    param_dir = LaunchConfig('camera_parameter_directory').perform(context)
-    calib_dir = LaunchConfig('calibration_directory').perform(context)
-    calib_url = f'file://{calib_dir}/'
+    pd = LaunchConfig('camera_parameter_directory')
+    calib_url = 'file://' + LaunchConfig('calibration_directory').perform(context) + '/'
 
+    exp_ctrl_names = [cam + '.exposure_controller' for cam in camera_list.keys()]
     driver_parameters = {
         'cameras': list(camera_list.keys()),
+        'exposure_controllers': exp_ctrl_names,
         'ffmpeg_image_transport.encoding': 'hevc_nvenc',
     }
+    # Generate identical exposure controller parameters for all cameras
+    for exp in exp_ctrl_names:
+        driver_parameters.update(
+            {exp + '.' + k: v for k, v in exposure_controller_parameters.items()}
+        )
+    # Set cam0 as master and cam1 as follower
+    driver_parameters[exp_ctrl_names[0] + '.type'] = 'master'
+    driver_parameters[exp_ctrl_names[1] + '.type'] = 'follower'
+    driver_parameters[exp_ctrl_names[1] + '.master'] = exp_ctrl_names[0]
 
     # Generate camera parameters
-    parameter_file_path = os.path.join(param_dir, 'blackfly_s.yaml')
-    primary_cam_parameters['parameter_file'] = parameter_file_path
-    secondary_cam_parameters['parameter_file'] = parameter_file_path
+    primary_cam_parameters['parameter_file'] = PJoin([pd, 'blackfly_s.yaml'])
+    secondary_cam_parameters['parameter_file'] = PJoin([pd, 'blackfly_s.yaml'])
     for cam, serial in camera_list.items():
         if cam == 'cam0':
             cam_params = {cam + '.' + k: v for k, v in primary_cam_parameters.items()}
@@ -111,6 +122,7 @@ def make_parameters(context):
         cam_params[cam + '.camerainfo_url'] = calib_url + serial + '.yaml'
         cam_params[cam + '.frame_id'] = cam
         driver_parameters.update(cam_params)
+        driver_parameters.update({cam + '.exposure_controller_name': cam + '.exposure_controller'})
     return driver_parameters
 
 
